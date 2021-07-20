@@ -4,7 +4,6 @@ import torchvision.transforms as transforms
 
 import numpy as np
 
-
 def load_data(dataset, n=2**14, d=2**8, df=2):
     if dataset == 'synthetic_orthogonal':
         return generate_orthogonal(n=n, d=d)
@@ -56,27 +55,14 @@ def generate_orthogonal(n=2**12, d=2**10):
     
     
 
-def load_cifar(n=2**13, d=2**8):
+#def load_cifar(n=2**13, d=2**8):
+def load_cifar(n=50000, d=2**8):
     transform = transforms.Compose([transforms.ToTensor()])
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=n, shuffle=True, num_workers=2)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=n, shuffle=True, num_workers=0)
     
     A_, b_ = iter(trainloader).next()
     A_ = torch.tensor(A_.reshape((A_.shape[0], -1)), dtype=torch.float64)[:,:d]
     b = torch.tensor([-1 if b_[ii] % 2 == 0 else 1 for ii in range(len(b_))], dtype=torch.float64).reshape((-1,1))
     
     return A_, b
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    

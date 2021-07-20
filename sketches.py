@@ -162,7 +162,3 @@ def srht(matrix, sketch_size, nnz=None):
     return 1./np.sqrt(sketch_size) * _srht(indices, matrix)
     #return _srht(indices, matrix)
 '''
-    
-    
-    
-    

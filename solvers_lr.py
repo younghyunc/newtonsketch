@@ -162,9 +162,30 @@ class LogisticRegression:
         losses /= losses[0]
         
         return x, losses, np.cumsum([0] + times)[:-1]
-    
-    
-    
+
+
+    def ihs_tuning(self, sketch_size, sketch='gaussian', nnz=1., error_tolerance=1e-6):
+
+        losses = []
+        times = []
+
+        #time_sketch = profile_times(A, sketch, sketch_size, nnz)
+
+        x = 1./np.sqrt(self.d) * torch.randn(self.d, self.c).to(self.device)
+        loss0 = self.loss(x).cpu().numpy().item()
+        while True:
+            loss = self.loss(x).cpu().numpy().item()/loss0
+            losses.append(loss)
+            x, time_ = self.ihs_(x, sketch_size, sketch, nnz)
+            times.append(time_)
+            if loss < error_tolerance:
+                break
+
+        losses = np.array(losses)
+
+        return x, losses, np.cumsum([0] + times)[:-1]
+
+
     def gd(self, n_iter=1000):      
         losses = []
         times = []
