@@ -11,6 +11,12 @@ def load_data(dataset, n=2**14, d=2**8, df=2):
         return generate_high_coherence(n=n, d=d, df=df)
     elif dataset == 'cifar-10':
         return load_cifar()
+    elif dataset == 'mnist_10Kn':
+        return load_mnist_10Kn()
+    elif dataset == 'susy_10Kn':
+        return load_susy_10Kn()
+    elif dataset == 'susy_100Kn':
+        return load_susy_100Kn()
     elif dataset == 'musk':
         data = np.load('./data/musk.npz')
         A, b = data['A'], data['b']
@@ -51,12 +57,13 @@ def generate_orthogonal(n=2**12, d=2**10):
     A = np.random.randn(n,d)
     A, _, _ = np.linalg.svd(A, full_matrices=False)
     b = 1./np.sqrt(n) * np.random.randn(n,1)
+
     return torch.tensor(A), torch.tensor(b)
-    
-    
+
+
 
 #def load_cifar(n=2**13, d=2**8):
-def load_cifar(n=50000, d=2**8):
+def load_cifar(n=50000, d=1000):
     transform = transforms.Compose([transforms.ToTensor()])
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=n, shuffle=True, num_workers=0)
@@ -64,5 +71,83 @@ def load_cifar(n=50000, d=2**8):
     A_, b_ = iter(trainloader).next()
     A_ = torch.tensor(A_.reshape((A_.shape[0], -1)), dtype=torch.float64)[:,:d]
     b = torch.tensor([-1 if b_[ii] % 2 == 0 else 1 for ii in range(len(b_))], dtype=torch.float64).reshape((-1,1))
-    
+
+    print ("A: ", A_)
+    print ("b: ", b)
+
     return A_, b
+
+def load_mnist_10Kn():
+    # read data
+    fname = './data/mnist_10Kn'
+    prec = np.float64
+    train_points = np.genfromtxt(
+        fname + '_train.csv', delimiter=",", dtype=prec
+    )
+    train_labels = np.genfromtxt(
+        fname + '_train_label.csv', delimiter=",", dtype=prec
+    )
+    #test_points = np.genfromtxt(
+    #    fname + '_test.csv', delimiter=",", dtype=prec
+    #)
+    #test_labels = np.genfromtxt(
+    #    fname + '_test_label.csv', delimiter=",", dtype=prec
+    #)
+
+    A = torch.tensor(train_points)
+    d = torch.tensor(np.reshape(train_labels, (-1,1)))
+
+    print ("A: ", A)
+    print ("d: ", d)
+
+    return A, d
+
+def load_susy_10Kn():
+    # read data
+    fname = './data/susy_10Kn'
+    prec = np.float64
+    train_points = np.genfromtxt(
+        fname + '_train.csv', delimiter=",", dtype=prec
+    )
+    train_labels = np.genfromtxt(
+        fname + '_train_label.csv', delimiter=",", dtype=prec
+    )
+    #test_points = np.genfromtxt(
+    #    fname + '_test.csv', delimiter=",", dtype=prec
+    #)
+    #test_labels = np.genfromtxt(
+    #    fname + '_test_label.csv', delimiter=",", dtype=prec
+    #)
+
+    A = torch.tensor(train_points)
+    d = torch.tensor(np.reshape(train_labels, (-1,1)))
+
+    print ("A: ", A)
+    print ("d: ", d)
+
+    return A, d
+
+def load_susy_100Kn():
+    # read data
+    fname = './data/susy_100Kn'
+    prec = np.float64
+    train_points = np.genfromtxt(
+        fname + '_train.csv', delimiter=",", dtype=prec
+    )
+    train_labels = np.genfromtxt(
+        fname + '_train_label.csv', delimiter=",", dtype=prec
+    )
+    #test_points = np.genfromtxt(
+    #    fname + '_test.csv', delimiter=",", dtype=prec
+    #)
+    #test_labels = np.genfromtxt(
+    #    fname + '_test_label.csv', delimiter=",", dtype=prec
+    #)
+
+    A = torch.tensor(train_points)
+    d = torch.tensor(np.reshape(train_labels, (-1,1)))
+
+    print ("A: ", A)
+    print ("d: ", d)
+
+    return A, d
