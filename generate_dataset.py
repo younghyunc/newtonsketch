@@ -10,7 +10,7 @@ def load_data(dataset, n=2**14, d=2**8, df=2):
     elif dataset == 'synthetic_high_coherence':
         return generate_high_coherence(n=n, d=d, df=df)
     elif dataset == 'cifar-10':
-        return load_cifar()
+        return load_cifar(n=n, d=d)
     elif dataset == 'mnist_10Kn':
         return load_mnist_10Kn()
     elif dataset == 'susy_10Kn':
@@ -62,8 +62,7 @@ def generate_orthogonal(n=2**12, d=2**10):
 
 
 
-#def load_cifar(n=2**13, d=2**8):
-def load_cifar(n=50000, d=1000):
+def load_cifar(n=2**13, d=2**8):
     transform = transforms.Compose([transforms.ToTensor()])
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=n, shuffle=True, num_workers=0)

@@ -164,7 +164,7 @@ class LogisticRegression:
         return x, losses, np.cumsum([0] + times)[:-1]
 
 
-    def ihs_tuning(self, sketch_size, sketch='gaussian', nnz=1., error_tolerance=1e-6):
+    def ihs_tuning(self, sketch_size, sketch='gaussian', nnz=1., error_threshold=1e-6):
 
         losses = []
         times = []
@@ -178,7 +178,7 @@ class LogisticRegression:
             losses.append(loss)
             x, time_ = self.ihs_(x, sketch_size, sketch, nnz)
             times.append(time_)
-            if loss < error_tolerance:
+            if loss < error_threshold:
                 break
 
         losses = np.array(losses)
