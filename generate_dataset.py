@@ -4,7 +4,7 @@ import torchvision.transforms as transforms
 
 import numpy as np
 
-def load_data(dataset, n=2**14, d=2**8, df=2, nth=0):
+def load_data(dataset, n=2**14, d=2**8, df=2, nth=0, option="spread"):
     if dataset == 'synthetic_orthogonal':
         return generate_orthogonal(n=n, d=d)
     elif dataset == 'synthetic_high_coherence':
@@ -19,6 +19,10 @@ def load_data(dataset, n=2**14, d=2**8, df=2, nth=0):
         return load_susy_100Kn(nth=nth)
     elif dataset == 'epsilon_normalized_10Kn':
         return load_epsilon_normalized_10Kn(nth=nth)
+    elif dataset == 'epsilon_normalized_20Kn':
+        return load_epsilon_normalized_20Kn(nth=nth)
+    elif dataset == 'epsilon_normalized_100Kn':
+        return load_epsilon_normalized_100Kn(option="spread")
     elif dataset == 'musk':
         data = np.load('./data/musk.npz')
         A, b = data['A'], data['b']
@@ -175,3 +179,42 @@ def load_epsilon_normalized_10Kn(nth=0):
     print ("d: ", d)
 
     return A, d
+
+def load_epsilon_normalized_20Kn(nth=0):
+    # read data
+    fname = './data/epsilon_normalized_20Kn'
+    prec = np.float64
+    train_points = np.genfromtxt(
+        fname + '_train_'+str(nth)+'.csv', delimiter=",", dtype=prec
+    )
+    train_labels = np.genfromtxt(
+        fname + '_train_label_'+str(nth)+'.csv', delimiter=",", dtype=prec
+    )
+
+    A = torch.tensor(train_points)
+    d = torch.tensor(np.reshape(train_labels, (-1,1)))
+
+    print ("A: ", A)
+    print ("d: ", d)
+
+    return A, d
+
+def load_epsilon_normalized_100Kn(option="spread"):
+    # read data
+    fname = './data/epsilon_normalized_100Kn'
+    prec = np.float64
+    train_points = np.genfromtxt(
+        fname + '_train_'+option+'.csv', delimiter=",", dtype=prec
+    )
+    train_labels = np.genfromtxt(
+        fname + '_train_label_'+option+'.csv', delimiter=",", dtype=prec
+    )
+
+    A = torch.tensor(train_points)
+    d = torch.tensor(np.reshape(train_labels, (-1,1)))
+
+    print ("A: ", A)
+    print ("d: ", d)
+
+    return A, d
+
