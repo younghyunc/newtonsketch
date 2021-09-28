@@ -49,10 +49,18 @@ class LogisticRegression:
             return -a_i.reshape((-1,1)) * (b_i /(1+torch.exp(b_i * ( (a_i*x).sum()))))+ self.lambd * x
         
     def hessian(self, x):
+        import scipy as sp
+        import scipy.sparse
+
         Ax = self.A @ x
         v = torch.exp(self.b * Ax)
         D = v / (1+v)**2
-        return 1./self.n * self.A.T @ torch.diag(D.squeeze()) @ self.A + self.lambd * torch.eye(self.d).to(self.device)
+
+        D_ = D.squeeze()
+        D_sparse = sp.sparse.spdiags(D_, 0, len(D_), len(D_))
+
+        return 1./self.n * self.A.T @ (D_sparse @ self.A) + self.lambd * torch.eye(self.d).to(self.device)
+        #return 1./self.n * self.A.T @ torch.diag(D.squeeze()) @ self.A + self.lambd * torch.eye(self.d).to(self.device)
 
     def sqrt_hess(self, x):
         v_ = torch.exp(self.b * (self.A @ x))
