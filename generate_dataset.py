@@ -17,10 +17,14 @@ def load_data(dataset, n=2**14, d=2**8, df=2, nth=0, option="spread"):
         return load_susy_10Kn()
     elif dataset == 'susy_100Kn':
         return load_susy_100Kn(nth=nth)
-    elif dataset == 'epsilon_normalized_10Kn':
-        return load_epsilon_normalized_10Kn(nth=nth)
+    elif dataset == 'susy_200Kn':
+        return load_susy_200Kn(nth=nth)
+    elif dataset == 'susy_500Kn':
+        return load_susy_500Kn()
+    elif dataset == 'susy_1Mn':
+        return load_susy_1Mn()
     elif dataset == 'epsilon_normalized_20Kn':
-        return load_epsilon_normalized_20Kn(nth=nth)
+        return load_epsilon_normalized_20Kn(option="spread")
     elif dataset == 'epsilon_normalized_100Kn':
         return load_epsilon_normalized_100Kn(option="spread")
     elif dataset == 'musk':
@@ -161,15 +165,69 @@ def load_susy_100Kn(nth=0):
 
     return A, d
 
-def load_epsilon_normalized_10Kn(nth=0):
+def load_susy_200Kn(nth=0):
     # read data
-    fname = './data/epsilon_normalized_10Kn'
+    fname = './data/susy_1Mn'
     prec = np.float64
     train_points = np.genfromtxt(
-        fname + '_train_'+str(nth)+'.csv', delimiter=",", dtype=prec
+        fname + '_train.csv', delimiter=",", dtype=prec
     )
     train_labels = np.genfromtxt(
-        fname + '_train_label_'+str(nth)+'.csv', delimiter=",", dtype=prec
+        fname + '_train_label.csv', delimiter=",", dtype=prec
+    )
+
+    train_points = train_points[nth*200000:(nth+1)*200000]
+    train_labels = train_labels[nth*200000:(nth+1)*200000]
+
+    #test_points = np.genfromtxt(
+    #    fname + '_test.csv', delimiter=",", dtype=prec
+    #)
+    #test_labels = np.genfromtxt(
+    #    fname + '_test_label.csv', delimiter=",", dtype=prec
+    #)
+
+    A = torch.tensor(train_points)
+    d = torch.tensor(np.reshape(train_labels, (-1,1)))
+
+    print ("A: ", A)
+    print ("d: ", d)
+
+    return A, d
+
+def load_susy_500Kn():
+    # read data
+    fname = './data/susy_500Kn'
+    prec = np.float64
+    train_points = np.genfromtxt(
+        fname + '_train.csv', delimiter=",", dtype=prec
+    )
+    train_labels = np.genfromtxt(
+        fname + '_train_label.csv', delimiter=",", dtype=prec
+    )
+    #test_points = np.genfromtxt(
+    #    fname + '_test.csv', delimiter=",", dtype=prec
+    #)
+    #test_labels = np.genfromtxt(
+    #    fname + '_test_label.csv', delimiter=",", dtype=prec
+    #)
+
+    A = torch.tensor(train_points)
+    d = torch.tensor(np.reshape(train_labels, (-1,1)))
+
+    print ("A: ", A)
+    print ("d: ", d)
+
+    return A, d
+
+def load_susy_1Mn():
+    # read data
+    fname = './data/susy_1Mn'
+    prec = np.float64
+    train_points = np.genfromtxt(
+        fname + '_train.csv', delimiter=",", dtype=prec
+    )
+    train_labels = np.genfromtxt(
+        fname + '_train_label.csv', delimiter=",", dtype=prec
     )
 
     A = torch.tensor(train_points)
@@ -180,15 +238,15 @@ def load_epsilon_normalized_10Kn(nth=0):
 
     return A, d
 
-def load_epsilon_normalized_20Kn(nth=0):
+def load_epsilon_normalized_20Kn(option="spread"):
     # read data
     fname = './data/epsilon_normalized_20Kn'
     prec = np.float64
     train_points = np.genfromtxt(
-        fname + '_train_'+str(nth)+'.csv', delimiter=",", dtype=prec
+        fname + '_train_'+option+'.csv', delimiter=",", dtype=prec
     )
     train_labels = np.genfromtxt(
-        fname + '_train_label_'+str(nth)+'.csv', delimiter=",", dtype=prec
+        fname + '_train_label_'+option+'.csv', delimiter=",", dtype=prec
     )
 
     A = torch.tensor(train_points)
