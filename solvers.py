@@ -84,8 +84,8 @@ class IHS(Solver):
         return x, time() - start
 
 
-    @average
-    def solve(self, m, q=1, line_search=False, n_iterations=10, n_trials=1, nnz=None):
+    #@average
+    def solve(self, m, q=1, line_search=False, n_iterations=100, n_trials=1, nnz=None, error_threshold=1e-6):
         if nnz is None:
             self.nnz = self.d / self.n
         else:
@@ -99,15 +99,22 @@ class IHS(Solver):
         times = []
         iteration = 0
 
+        success = False
         for _ in range(n_iterations):
             x, time_ = self.ihs_iteration(x, m, q)
-            errors.append(self.compute_error(x))
+            error = self.compute_error(x)
+            errors.append(error)
             times.append(time_)
+
+            if error < error_threshold:
+                success = True
+                break
+
+        if success == False:
+            times = [999999]
+
+        print ("errors: ", errors)
 
         cv_rate = (errors[-1]/errors[0])**(1./n_iterations)
         return x, torch.Tensor(errors)/errors[0], cv_rate, np.cumsum(times)
-    
-    
-    
-    
-    
+
